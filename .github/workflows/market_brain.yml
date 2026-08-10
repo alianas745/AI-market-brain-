@@ -1,0 +1,11 @@
+name: Market Brain Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: echo "AI Market Brain is working!"
