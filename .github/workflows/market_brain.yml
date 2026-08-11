@@ -8,15 +8,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/setup-java@v5
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-    java-version: '17'
-        
+          java-version: '17'
+
       - name: Extract Android project
         run: unzip -o AI_Market_Brain_Android_Prototype.zip
 
