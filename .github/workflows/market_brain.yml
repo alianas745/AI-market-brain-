@@ -11,42 +11,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract Android project
-        run: |
-          unzip -o AI_Market_Brain_Android_Prototype.zip
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
+
+      - name: Extract Android project
+        run: unzip -o AI_Market_Brain_Android_Prototype.zip
 
       - name: Install Gradle
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.11.1-bin.zip
           unzip -q gradle-8.11.1-bin.zip
-          echo "$PWD/gradle-8.11.1/bin" >> $GITHUB_PATH
+          echo "$PWD/gradle-8.11.1/bin" >> "$GITHUB_PATH"
 
       - name: Fix Java JVM target
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("app/build.gradle")
-          if p.exists():
-              s = p.read_text()
-              s = s.replace(
-                  "JavaVersion.VERSION_1_8",
-                  "JavaVersion.VERSION_17"
-              )
-              p.write_text(s)
-          PY
+          sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' app/build.gradle
 
       - name: Build APK
-              - name: Find APK
+        run: gradle assembleDebug
+
+      - name: Find APK
         run: |
           mkdir -p artifacts
-          find . -type f -name "*.apk" -print
           APK=$(find . -type f -name "*.apk" | head -n 1)
           if [ -z "$APK" ]; then
             echo "APK not found"
