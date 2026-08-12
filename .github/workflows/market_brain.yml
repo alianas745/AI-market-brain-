@@ -18,7 +18,8 @@ jobs:
           java-version: '17'
 
       - name: Extract Android project
-        run: unzip -o AI_Market_Brain_Android_Prototype.zip
+        run: |
+          unzip -o AI_Market_Brain_Android_Prototype.zip
 
       - name: Install Gradle
         run: |
@@ -28,17 +29,18 @@ jobs:
 
       - name: Find Android project
         run: |
-                    PROJECT_DIR=$(find . -name build.gradle -type f | head -n 1 | xargs dirname)
+          PROJECT_DIR=$(find . -name build.gradle -not -path './gradle/*' -print -quit | xargs dirname)
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Found project at: $PROJECT_DIR"
 
       - name: Build APK
-        run: gradle -p "$PROJECT_DIR" assembleDebug
+        run: |
+          gradle -p "$PROJECT_DIR" assembleDebug
 
       - name: Find APK
         run: |
           mkdir -p artifacts
-          APK=$(find . -type f -name "*.apk" | head -n 1)
+          APK=$(find "$PROJECT_DIR" -type f -name "*.apk" | head -n 1)
           if [ -z "$APK" ]; then
             echo "APK not found"
             exit 1
